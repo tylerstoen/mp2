@@ -1,0 +1,257 @@
+---
+title: "Effect of Citronellal Odor Puffs on Cockroach Neurons 2 and 3"
+format: html
+editor: visual
+---
+
+## Goal
+
+We compare the effect of citronellal odor puff stimulation on the firing rate of two cockroach antennal lobe neurons (Neuron 2 and Neuron 3).
+
+We will:
+
+1.  Visualize spike trains.
+2.  Form a qualitative hypothesis.
+3.  Fit one NHPP model per neuron.
+4.  Visualize stimulus effects.
+5.  Determine whether the effect differs across neurons.
+
+------------------------------------------------------------------------
+
+```{r setup, include=FALSE}
+library(mgcv)
+
+# load data
+download.file(
+  url = 'https://ruizt.quarto.pub/stat545/data/cockroach.RData',
+  destfile = 'cockroach.RData'
+)
+load('cockroach.RData')
+
+# panel raster plot from ev_nX (list of spike-time vectors), with stimulus window highlighted
+plot_rasters_from_ev <- function(ev, n_trials = 10, trials = NULL,
+                                 stim_on = 5.99, stim_off = 6.49,
+                                 ncol = 5, T_end = 15, seed = 1) {
+  stopifnot(is.list(ev))
+  all_trials <- names(ev)
+
+  if (is.null(trials)) {
+    set.seed(seed)
+    trials <- sample(all_trials, size = min(n_trials, length(all_trials)))
+  } else {
+    trials <- intersect(trials, all_trials)
+  }
+
+  n_trials <- length(trials)
+  nrow <- ceiling(n_trials / ncol)
+
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar), add = TRUE)
+  par(mfrow = c(nrow, ncol), mar = c(2.2, 2.2, 2.0, 0.5), mgp = c(1.5, 0.5, 0))
+
+  for (tr in trials) {
+    times <- ev[[tr]]
+    times <- times[is.finite(times) & times >= 0 & times <= T_end]
+
+    plot(NA, xlim = c(0, T_end), ylim = c(0, 1),
+         xlab = "", ylab = "", yaxt = "n", main = tr)
+
+    rect(stim_on, 0, stim_off, 1, border = NA, col = adjustcolor("red", 0.5))
+
+    if (length(times)) segments(times, 0.2, times, 0.8, lwd = 1)
+
+    box()
+    axis(1, at = 5.99, labels = 5.99, cex.axis = 0.75)
+  }
+}
+```
+
+## Raster Plots: Neuron 2
+
+If stimulation affects firing rate, we expect spike density to change during the red stimulus window (5.99–6.49 s).
+
+```{r}
+plot_rasters_from_ev(ev_n2, n_trials = 6, ncol = 2)
+```
+
+**Hypothesis (Neuron 2):**
+
+Visually inspect whether spikes cluster inside the red region.
+
+------------------------------------------------------------------------
+
+## Raster Plots: Neuron 3
+
+```{r}
+plot_rasters_from_ev(ev_n3, n_trials = 6, ncol = 2)
+```
+
+**Hypothesis (Neuron 3):**
+
+Compare spike density during stimulation to baseline and compare to Neuron 2.
+
+------------------------------------------------------------------------
+
+## Model Specification
+
+We approximate the non-homogeneous Poisson process by binning time.
+
+Assume:
+
+$$
+Y_{it} \sim \text{Poisson}(\lambda_i(t)\Delta t)
+$$
+
+Using the log link:
+
+$$
+\log(\lambda_i(t)) = \beta_0 + \beta_1 \cdot \text{stim}(t) + f(t) + b_{\text{trial}}
+$$
+
+Where:
+
+-   $\beta_1$ = stimulation effect (log scale)
+-   $f(t)$ = smooth baseline firing pattern
+-   $b_{\text{trial}} \sim N(0,\sigma^2)$ = trial random effect
+-   $\log(\Delta t)$ = offset
+
+------------------------------------------------------------------------
+
+## Fit Model: Neuron 2
+
+```{r}
+df_n2$trial <- factor(df_n2$trial)
+
+fit_n2 <- gam(
+  y ~ stim + s(t, bs = "cr", k = 15) + s(trial, bs = "re"),
+  family = poisson(),
+  offset = log_dt,
+  gamma = 1.4,
+  data = df_n2,
+  method = "REML"
+)
+```
+
+------------------------------------------------------------------------
+
+## Stimulus Effect on Intensity: Neuron 2
+
+We exponentiate the smooth to obtain multiplicative change in firing intensity:
+
+$$
+\text{Intensity Ratio} = \exp(\beta_1)
+$$
+
+```{r}
+p2 <- plot(fit_n2, select = 1)[[1]]
+x2 <- p2$x
+y2 <- exp(p2$fit)
+lo2 <- exp(p2$fit - 2 * p2$se)
+hi2 <- exp(p2$fit + 2 * p2$se)
+
+plot(x2, y2, type = "n",
+     xlab = "t (s)",
+     ylab = "multiplicative effect",
+     main = "Neuron 2: Effect of Stimulation")
+
+polygon(c(x2, rev(x2)), c(lo2, rev(hi2)),
+        border = NA,
+        col = adjustcolor("gray", 0.25))
+
+usr <- par("usr")
+rect(5.99, usr[3], 6.49, usr[4],
+     border = NA,
+     col = adjustcolor("red", 0.20))
+
+lines(x2, y2, lwd = 2)
+abline(h = 1, lty = 2)
+```
+
+Interpretation:
+
+-   If curve \> 1 → increased firing
+-   If curve \< 1 → suppression
+-   If CI includes 1 → weak/no evidence
+
+------------------------------------------------------------------------
+
+## Fit Model: Neuron 3
+
+```{r}
+df_n3$trial <- factor(df_n3$trial)
+
+fit_n3 <- gam(
+  y ~ stim + s(t, bs = "cr", k = 15) + s(trial, bs = "re"),
+  family = poisson(),
+  offset = log_dt,
+  gamma = 1.4,
+  data = df_n3,
+  method = "REML"
+)
+```
+
+------------------------------------------------------------------------
+
+## Stimulus Effect on Intensity: Neuron 3
+
+```{r}
+p3 <- plot(fit_n3, select = 1)[[1]]
+x3 <- p3$x
+y3 <- exp(p3$fit)
+lo3 <- exp(p3$fit - 2 * p3$se)
+hi3 <- exp(p3$fit + 2 * p3$se)
+
+plot(x3, y3, type = "n",
+     xlab = "t (s)",
+     ylab = "multiplicative effect",
+     main = "Neuron 3: Effect of Stimulation")
+
+polygon(c(x3, rev(x3)), c(lo3, rev(hi3)),
+        border = NA,
+        col = adjustcolor("gray", 0.25))
+
+usr <- par("usr")
+rect(5.99, usr[3], 6.49, usr[4],
+     border = NA,
+     col = adjustcolor("red", 0.20))
+
+lines(x3, y3, lwd = 2)
+abline(h = 1, lty = 2)
+```
+
+------------------------------------------------------------------------
+
+## Final Comparison
+
+Answer the key questions:
+
+### 1. Do citronellal odor puffs affect firing rate?
+
+-   Does the multiplicative effect differ from 1?
+-   Does the confidence band exclude 1?
+
+### 2. Is the effect uniform across neurons?
+
+Compare:
+
+-   Magnitude
+-   Direction
+-   Uncertainty
+
+Possible outcomes:
+
+-   Both increase → uniform excitatory effect
+-   One increases, one decreases → neuron-specific response
+-   One significant, one null → heterogeneous sensitivity
+-   Both null → no detectable effect
+
+------------------------------------------------------------------------
+
+## Conclusion
+
+Based on the fitted NHPP models:
+
+-   Neuron 2: (describe result)
+-   Neuron 3: (describe result)
+
+Therefore, citronellal odor puffs **\[do / do not\]** affect firing rate, and the effect **\[is / is not\]** uniform across neurons.
