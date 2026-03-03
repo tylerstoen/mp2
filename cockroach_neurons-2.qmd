@@ -6,7 +6,7 @@ editor: visual
 
 ## Goal
 
-We compare the effect of citronellal odor puff stimulation on the firing rate of two cockroach antennal lobe neurons (Neuron 2 and Neuron 3).
+We compare the effect of citronellal odor puff stimulation on the firing rate of two cockroach antennal lobe neurons (Neuron 1, Neuron 2 and Neuron 3).
 
 We will:
 
@@ -166,7 +166,7 @@ hi1 <- exp(p1$fit + 2 * p1$se)
 plot(x1, y1, type = "n",
      xlab = "t (s)",
      ylab = "multiplicative effect",
-     main = "Neuron 2: Effect of Stimulation")
+     main = "Neuron 1: Effect of Stimulation")
 
 polygon(c(x1, rev(x1)), c(lo1, rev(hi1)),
         border = NA,
