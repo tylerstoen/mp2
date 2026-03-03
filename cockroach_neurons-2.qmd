@@ -66,6 +66,20 @@ plot_rasters_from_ev <- function(ev, n_trials = 10, trials = NULL,
 }
 ```
 
+## Raster Plots: Neuron 1
+
+If stimulation affects firing rate, we expect spike density to change during the red stimulus window (5.99–6.49 s).
+
+```{r}
+plot_rasters_from_ev(ev_n1, n_trials = 6, ncol = 2)
+```
+
+**Hypothesis (Neuron 1):**
+
+Visually inspect whether spikes cluster inside the red region.
+
+------------------------------------------------------------------------
+
 ## Raster Plots: Neuron 2
 
 If stimulation affects firing rate, we expect spike density to change during the red stimulus window (5.99–6.49 s).
@@ -114,6 +128,64 @@ Where:
 -   $f(t)$ = smooth baseline firing pattern
 -   $b_{\text{trial}} \sim N(0,\sigma^2)$ = trial random effect
 -   $\log(\Delta t)$ = offset
+
+------------------------------------------------------------------------
+
+## Fit Model: Neuron 1
+
+```{r}
+df_n1$trial <- factor(df_n1$trial)
+
+fit_n1 <- gam(
+  y ~ stim + s(t, bs = "cr", k = 15) + s(trial, bs = "re"),
+  family = poisson(),
+  offset = log_dt,
+  gamma = 1.4,
+  data = df_n1,
+  method = "REML"
+)
+```
+
+------------------------------------------------------------------------
+
+## Stimulus Effect on Intensity: Neuron 1
+
+We exponentiate the smooth to obtain multiplicative change in firing intensity:
+
+$$
+\text{Intensity Ratio} = \exp(\beta_1)
+$$
+
+```{r}
+p1 <- plot(fit_n1, select = 1)[[1]]
+x1 <- p1$x
+y1 <- exp(p1$fit)
+lo1 <- exp(p1$fit - 2 * p1$se)
+hi1 <- exp(p1$fit + 2 * p1$se)
+
+plot(x1, y1, type = "n",
+     xlab = "t (s)",
+     ylab = "multiplicative effect",
+     main = "Neuron 2: Effect of Stimulation")
+
+polygon(c(x1, rev(x1)), c(lo1, rev(hi1)),
+        border = NA,
+        col = adjustcolor("gray", 0.25))
+
+usr <- par("usr")
+rect(5.99, usr[3], 6.49, usr[4],
+     border = NA,
+     col = adjustcolor("red", 0.20))
+
+lines(x1, y1, lwd = 2)
+abline(h = 1, lty = 2)
+```
+
+Interpretation:
+
+-   If curve \> 1 → increased firing
+-   If curve \< 1 → suppression
+-   If CI includes 1 → weak/no evidence
 
 ------------------------------------------------------------------------
 
