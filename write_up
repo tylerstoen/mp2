@@ -1,0 +1,188 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\title{\textbf{Effect of Citronellal Odor Puffs on Cockroach Neurons}}
+\author{Your Name}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+%------------------------------------------------
+\section*{Goal}
+
+We study whether citronellal odor puff stimulation changes the firing
+rate of cockroach antennal lobe neurons. Specifically, we compare the
+response of three neurons and determine whether the stimulus effect is
+consistent across neurons.
+
+The analysis follows four steps:
+
+\begin{enumerate}
+\item Visualize spike trains with raster plots
+\item Form qualitative hypotheses
+\item Fit a non-homogeneous Poisson process (NHPP) model
+\item Evaluate stimulus effects for each neuron
+\end{enumerate}
+
+%------------------------------------------------
+\section*{Exploratory Analysis: Raster Plots}
+
+Raster plots visualize spike timing across repeated trials.
+
+If stimulation affects firing rate, we expect spike density to change
+during the stimulus window (5.99–6.49 seconds).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.85\textwidth]{neuron1_raster.png}
+\caption{Raster plots for Neuron 1 showing spike times across trials.
+The red shaded region represents the stimulus window.}
+\end{figure}
+
+%------------------------------------------------
+\section*{Hypotheses}
+
+\subsection*{Neuron 1}
+
+Based on the raster plots, Neuron 1 appears to exhibit increased
+spike density during and immediately following the stimulus window.
+This suggests the citronellal odor puff increases the firing rate.
+
+\textbf{Hypothesis:}
+The odor stimulus increases firing activity in Neuron 1.
+
+\subsection*{Neuron 2}
+
+Raster plots for Neuron 2 also show clustering of spikes during the
+stimulus period.
+
+\textbf{Hypothesis:}
+The stimulus increases firing rate in Neuron 2.
+
+\subsection*{Neuron 3}
+
+Neuron 3 shows noticeable gaps in spikes during the stimulus window,
+suggesting suppressed activity.
+
+\textbf{Hypothesis:}
+The stimulus decreases firing rate in Neuron 3.
+
+%------------------------------------------------
+\section*{Model Specification}
+
+To model spike counts we approximate a non-homogeneous Poisson process
+by binning time into small intervals.
+
+\[
+Y_{it} \sim \text{Poisson}(\lambda_i(t)\Delta t)
+\]
+
+Using a log link:
+
+\[
+\log(\lambda_i(t)) =
+\beta_0 + \beta_1 \cdot \text{stim}(t) + f(t) + b_{\text{trial}}
+\]
+
+where
+
+\begin{itemize}
+\item $\beta_1$ = stimulation effect (log scale)
+\item $f(t)$ = smooth baseline firing pattern
+\item $b_{\text{trial}} \sim N(0,\sigma^2)$ = trial random effect
+\item $\log(\Delta t)$ = offset term
+\end{itemize}
+
+This model allows the firing intensity to vary smoothly in time while
+capturing the effect of the stimulus.
+
+%------------------------------------------------
+\section*{Results}
+
+To interpret the stimulus effect we plot the exponentiated smooth term
+
+\[
+\exp(\hat{f}(t))
+\]
+
+which represents the multiplicative change in firing intensity.
+
+\subsection*{Neuron 1}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.8\textwidth]{neuron1_effect.png}
+\caption{Estimated multiplicative effect of stimulation on Neuron 1 firing intensity.}
+\end{figure}
+
+During the stimulus window the curve lies above 1 and the confidence
+bands exclude 1, indicating increased firing rate.
+
+\subsection*{Neuron 2}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.8\textwidth]{neuron2_effect.png}
+\caption{Estimated multiplicative effect for Neuron 2.}
+\end{figure}
+
+Neuron 2 also shows increased firing during the stimulus window.
+
+\subsection*{Neuron 3}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.8\textwidth]{neuron3_effect.png}
+\caption{Estimated multiplicative effect for Neuron 3.}
+\end{figure}
+
+Neuron 3 shows suppression during the stimulus window, as the curve and
+confidence bands lie below 1.
+
+%------------------------------------------------
+\section*{Interpretation Guide}
+
+\begin{itemize}
+\item If curve $>1$ $\rightarrow$ increased firing
+\item If curve $<1$ $\rightarrow$ suppression
+\item If CI includes $1$ $\rightarrow$ weak or no evidence
+\end{itemize}
+
+%------------------------------------------------
+\section*{Final Comparison}
+
+Two key questions guide the comparison:
+
+\textbf{1. Do citronellal odor puffs affect firing rate?}
+
+Yes. All neurons show a multiplicative effect different from 1.
+
+\textbf{2. Is the effect uniform across neurons?}
+
+No. The direction and magnitude of the response differ.
+
+\begin{itemize}
+\item Neuron 1: increased firing during stimulus
+\item Neuron 2: moderate increase during stimulus
+\item Neuron 3: suppression during stimulus
+\end{itemize}
+
+%------------------------------------------------
+\section*{Conclusion}
+
+The fitted non-homogeneous Poisson process models indicate that
+citronellal odor puffs affect neural firing rates. However, the effect
+is not uniform across neurons. While Neurons 1 and 2 exhibit increased
+activity, Neuron 3 shows suppression during the stimulus window.
+
+This suggests that the odor stimulus produces neuron-specific
+responses within the cockroach antennal lobe.
+
+\end{document}
