@@ -150,6 +150,15 @@ fit_n1 <- gam(
 
 ## Stimulus Effect on Intensity: Neuron 1
 
+- The plot shows the **estimated smooth time effect** from the fitted GAM for neuron 1.
+- Specifically, we plot $\exp(\hat{f}(t))$, the **exponentiated smooth function of time**.
+- $f(t)$ captures **time-varying structure in the log firing rate** not explained by the stimulus term.
+- Exponentiating converts the smooth from the **log scale to a multiplicative scale** for firing intensity.
+- The **black curve** shows the estimated effect $\exp(\hat{f}(t))$.
+- The **dashed bands** represent an approximate **95% confidence interval**.
+- The **red shaded region** marks the **stimulus window (odor puff)**.
+- The **horizontal line at 1** indicates the **reference level of the smooth** (no multiplicative change).
+
 ```{r}
 p1 <- plot(fit_n1, select = 1)[[1]]
 x1 <- p1$x
