@@ -150,12 +150,6 @@ fit_n1 <- gam(
 
 ## Stimulus Effect on Intensity: Neuron 1
 
-We exponentiate the smooth to obtain multiplicative change in firing intensity:
-
-$$
-\text{Intensity Ratio} = \exp(\beta_1)
-$$
-
 ```{r}
 p1 <- plot(fit_n1, select = 1)[[1]]
 x1 <- p1$x
@@ -209,12 +203,6 @@ fit_n2 <- gam(
 ------------------------------------------------------------------------
 
 ## Stimulus Effect on Intensity: Neuron 2
-
-We exponentiate the smooth to obtain multiplicative change in firing intensity:
-
-$$
-\text{Intensity Ratio} = \exp(\beta_1)
-$$
 
 ```{r}
 p2 <- plot(fit_n2, select = 1)[[1]]
