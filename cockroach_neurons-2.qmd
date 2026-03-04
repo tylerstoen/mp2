@@ -150,14 +150,14 @@ fit_n1 <- gam(
 
 ## Stimulus Effect on Intensity: Neuron 1
 
-- The plot shows the **estimated smooth time effect** from the fitted GAM for neuron 1.
-- Specifically, we plot $\exp(\hat{f}(t))$, the **exponentiated smooth function of time**.
-- $f(t)$ captures **time-varying structure in the log firing rate** not explained by the stimulus term.
-- Exponentiating converts the smooth from the **log scale to a multiplicative scale** for firing intensity.
-- The **black curve** shows the estimated effect $\exp(\hat{f}(t))$.
-- The **dashed bands** represent an approximate **95% confidence interval**.
-- The **red shaded region** marks the **stimulus window (odor puff)**.
-- The **horizontal line at 1** indicates the **reference level of the smooth** (no multiplicative change).
+-   The plot shows the **estimated smooth time effect** from the fitted GAM for neuron 1.
+-   Specifically, we plot $\exp(\hat{f}(t))$, the **exponentiated smooth function of time**.
+-   $f(t)$ captures **time-varying structure in the log firing rate** not explained by the stimulus term.
+-   Exponentiating converts the smooth from the **log scale to a multiplicative scale** for firing intensity.
+-   The **black curve** shows the estimated effect $\exp(\hat{f}(t))$.
+-   The **dashed bands** represent an approximate **95% confidence interval**.
+-   The **red shaded region** marks the **stimulus window (odor puff)**.
+-   The **horizontal line at 1** indicates the **reference level of the smooth** (no multiplicative change).
 
 ```{r}
 p1 <- plot(fit_n1, select = 1)[[1]]
@@ -296,37 +296,50 @@ In neuron 3, the curve and confidence bands lie entirely below 1 during and imme
 
 ------------------------------------------------------------------------
 
-## Final Comparison
+## **Final Comparison**
 
-Answer the key questions:
+### **1. Do citronellal odor puffs affect firing rate?**
 
-### 1. Do citronellal odor puffs affect firing rate?
+Yes. The models show that the multiplicative effect of the stimulus differs from 1 for all neurons.
 
--   Does the multiplicative effect differ from 1?
--   Does the confidence band exclude 1?
+-   **Neuron 1:** The multiplicative effect is greater than 1 during and shortly after the stimulus window. During this period, the confidence band lies **above** 1, indicating that the citronellal odor puff increases firing rate of this neuron.
 
-### 2. Is the effect uniform across neurons?
+-   **Neuron 2:** The multiplicative effect rises above 1 during the stimulus window, indicating that the citronellal odor puff increases firing rate while the stimulus is active. The confidence band does not include 1, so the increase is further supported. Immediately after the stimulus, both the multiplicative effect and confidence band drop below 1, indicating a decrease in firing rate following the stimulus.
 
-Compare:
+-   **Neuron 3:** The multiplicative effect is **below** 1duringthe stimulus window, indicating that the citronellal odor puff suppressed the neuron firing rate while it was in effect. Immediately after the stimulus, however, the effect **rises**above 1, suggesting a delayed increase in firing rate. The confidence band lies below 1 during the stimulus window, further providing evidence that the odor puff suppressed the firing rate.
 
--   Magnitude
--   Direction
--   Uncertainty
+### **2. Is the effect uniform across neurons?**
 
 Possible outcomes:
 
 -   Both increase → uniform excitatory effect
+
 -   One increases, one decreases → neuron-specific response
+
 -   One significant, one null → heterogeneous sensitivity
+
 -   Both null → no detectable effect
+
+No, the effect of citronellal odor stimulation is **not** uniform across the neurons.
+
+The direction and magnitude of the response differ across the three neurons.
+
+-   **Neuron 1** shows a clear increase in firing rate during the stimulus window, and the confidence band lies above 1, indicating strong evidence of an excitatory effect.
+
+-   **Neuron 2** also shows an increase during the stimulus, although the magnitude of the effect is smaller and the confidence band reflects greater uncertainty.
+
+-   **Neuron 3**, in contrast, shows a decrease in firing rate during the stimulus window, with the multiplicative effect falling below 1 and the confidence band supporting the evidence of suppression.
+
+Because two neurons show increased firing rate while one shows decreased firing rate, the response to the citronellal stimulation appears to be neuron-specific rather than uniform across neurons.
 
 ------------------------------------------------------------------------
 
-## Conclusion
+## **Conclusion**
 
 Based on the fitted NHPP models:
 
--   Neuron 2: (describe result)
--   Neuron 3: (describe result)
+-   **Neuron 2:** increases during stimulus, decreases after
 
-Therefore, citronellal odor puffs **\[do / do not\]** affect firing rate, and the effect **\[is / is not\]** uniform across neurons.
+-   **Neuron 3:** decrease during stimulus, increase after
+
+Therefore, citronellal odor puffs **do** affect firing rate, and the effect **is not** uniform across neurons.
