@@ -1,5 +1,5 @@
 ---
-title: "Effect of Citronellal Odor Puffs on Cockroach Neurons 2 and 3"
+title: "Effect of Citronellal Odor Puffs on Cockroach Neurons 1, 2, and 3"
 format: html
 editor: visual
 ---
