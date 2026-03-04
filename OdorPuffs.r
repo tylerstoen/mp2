@@ -3,7 +3,7 @@ library(mgcv)
 # cockroach data
 download.file(url = 'https://ruizt.quarto.pub/stat545/data/cockroach.RData',
               destfile = 'data/cockroach.RData')
-load('/Users/andresrocha/Downloads/cockroach.RData')
+load(here::here('cockroach.RData'))
 
 # the data are firing events ('spike times') for cockroach antennal lobe neurons
 # when stimulated by a citronella odor puff; each trial is one 15s stimulation

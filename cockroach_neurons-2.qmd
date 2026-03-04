@@ -76,7 +76,7 @@ plot_rasters_from_ev(ev_n1, n_trials = 6, ncol = 2)
 
 **Hypothesis (Neuron 1):**
 
-Visually inspect whether spikes cluster inside the red region.
+Based on the raster plots for Neuron 1, stimulation seems to lead to higher firing rate and dense spikes. This is shown by dark bands present in and following the stimulus, which is shown by the red area. We hypothesize that the odor puff simulation leads to more activity, in other words higher firing rate, in neuron 1.
 
 ------------------------------------------------------------------------
 
@@ -90,7 +90,7 @@ plot_rasters_from_ev(ev_n2, n_trials = 6, ncol = 2)
 
 **Hypothesis (Neuron 2):**
 
-Visually inspect whether spikes cluster inside the red region.
+For neuron 2, there is some activity clustering during and following the stimulus. Similar to neuron 1, there are clear dark bands of high activity and increased firing rate after the stimulus in neuron 2. We hypothesize that the stimulus decreases firing rate and less activity in neuron 2.
 
 ------------------------------------------------------------------------
 
@@ -102,7 +102,7 @@ plot_rasters_from_ev(ev_n3, n_trials = 6, ncol = 2)
 
 **Hypothesis (Neuron 3):**
 
-Compare spike density during stimulation to baseline and compare to Neuron 2.
+Unlike neurons 1 and 2, which exhibited more activity following the stimulus, neuron 3 exhibits gaps in activity after the stimulus. This suggests that the stimulus leads to a lower firing rate. So the logical hypothesis is that the stimulus leads to low activity in neuron 3.
 
 ------------------------------------------------------------------------
 
@@ -187,6 +187,8 @@ Interpretation:
 -   If curve \< 1 → suppression
 -   If CI includes 1 → weak/no evidence
 
+Because the curve and confidence bands lie entirely above 1 during and immediately following the stimulus, we have evidence that the stimulus leads to increased firing in neuron 1.
+
 ------------------------------------------------------------------------
 
 ## Fit Model: Neuron 2
@@ -245,6 +247,8 @@ Interpretation:
 -   If curve \< 1 → suppression
 -   If CI includes 1 → weak/no evidence
 
+In neuron 2, like neuron 1, the curve and confidence bands lie entirely above 1 during and immediately following the stimulus. Therefore, we also have evidence that the stimulus leads to increased firing in neuron 2.
+
 ------------------------------------------------------------------------
 
 ## Fit Model: Neuron 3
@@ -290,6 +294,8 @@ rect(5.99, usr[3], 6.49, usr[4],
 lines(x3, y3, lwd = 2)
 abline(h = 1, lty = 2)
 ```
+
+In neuron 3, the curve and confidence bands lie entirely below 1 during and immediately following the stimulus. So for neuron 3, we have evidence that the stimulus leads to decreased firing.
 
 ------------------------------------------------------------------------
 
